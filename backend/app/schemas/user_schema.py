@@ -1,46 +1,52 @@
 from pydantic import BaseModel, EmailStr, Field
 
 
-class UserRegister(BaseModel):
-    username: str
-    email: EmailStr
-    password: str = Field(
-        min_length=8,
-        max_length=72
-    )
+# =========================
+# REGISTER
+# =========================
 
+class UserRegister(BaseModel):
+    username: str = Field(min_length=3, max_length=50)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+
+
+# =========================
+# LOGIN
+# =========================
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=72)
+
+
+# =========================
+# USER RESPONSE
+# =========================
 
 class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    is_admin: bool
 
     class Config:
         from_attributes = True
 
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str = Field(
-        min_length=8,
-        max_length=72
-    )
-
+# =========================
+# UPDATE PROFILE
+# =========================
 
 class UserProfileUpdate(BaseModel):
-    username: str
+    username: str = Field(min_length=3, max_length=50)
     email: EmailStr
 
 
+# =========================
+# CHANGE PASSWORD
+# =========================
+
 class ChangePassword(BaseModel):
-    current_password: str
-    new_password: str = Field(
-        min_length=8,
-        max_length=72
-    )
-
-
-class TokenResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
+    current_password: str = Field(min_length=1, max_length=72)
+    new_password: str = Field(min_length=8, max_length=72)

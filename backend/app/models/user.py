@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.sql import func
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 
 from app.config.database import Base
 
@@ -15,30 +16,35 @@ class User(Base):
     )
 
     username = Column(
-        String,
+        String(50),
         unique=True,
-        nullable=False,
-        index=True
+        nullable=False
     )
 
     email = Column(
-        String,
+        String(100),
         unique=True,
-        nullable=False,
-        index=True
+        nullable=False
     )
 
     password_hash = Column(
-        String,
+        String(255),
         nullable=False
     )
 
     refresh_token = Column(
-        String,
+        String(500),
         nullable=True
+    )
+
+    is_admin = Column(
+        Boolean,
+        default=False,
+        nullable=False
     )
 
     created_at = Column(
         DateTime,
-        server_default=func.now()
+        default=datetime.utcnow,
+        nullable=False
     )

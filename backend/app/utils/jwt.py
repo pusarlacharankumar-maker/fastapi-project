@@ -1,75 +1,76 @@
+import os
 from datetime import datetime, timedelta, timezone
 
+from dotenv import load_dotenv
 from jose import JWTError, jwt
 
-# JWT SETTINGS
 
+load_dotenv()
 
-SECRET_KEY = "change-this-to-a-long-random-secret-key"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY is not set in .env")
 
 ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 
+# =========================
 # CREATE ACCESS TOKEN
+# =========================
 
-
-def create_access_token(data: dict):
-
-    to_encode = data.copy()
+def create_access_token(user_id: int) -> str:
 
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
-    to_encode.update({
-        "exp": expire,
-        "type": "access"
-    })
+    payload = {
+        "sub": str(user_id),
+        "type": "access",
+        "exp": expire
+    }
 
-    token = jwt.encode(
-        to_encode,
+    return jwt.encode(
+        payload,
         SECRET_KEY,
         algorithm=ALGORITHM
     )
 
-    return token
 
-
-
+# =========================
 # CREATE REFRESH TOKEN
+# =========================
 
-
-def create_refresh_token(data: dict):
-
-    to_encode = data.copy()
+def create_refresh_token(user_id: int) -> str:
 
     expire = datetime.now(timezone.utc) + timedelta(
         days=REFRESH_TOKEN_EXPIRE_DAYS
     )
 
-    to_encode.update({
-        "exp": expire,
-        "type": "refresh"
-    })
+    payload = {
+        "sub": str(user_id),
+        "type": "refresh",
+        "exp": expire
+    }
 
-    token = jwt.encode(
-        to_encode,
+    return jwt.encode(
+        payload,
         SECRET_KEY,
         algorithm=ALGORITHM
     )
 
-    return token
 
-# VERIFY TOKEN
+# =========================
+# VERIFY ACCESS TOKEN
+# =========================
 
 def verify_token(token: str):
 
     try:
-
         payload = jwt.decode(
             token,
             SECRET_KEY,
@@ -77,12 +78,43 @@ def verify_token(token: str):
         )
 
         user_id = payload.get("sub")
+        token_type = payload.get("type")
 
         if user_id is None:
+            return None
+
+        if token_type != "access":
             return None
 
         return user_id
 
     except JWTError:
+        return None
 
+
+# =========================
+# VERIFY REFRESH TOKEN
+# =========================
+
+def verify_refresh_token(token: str):
+
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        user_id = payload.get("sub")
+        token_type = payload.get("type")
+
+        if user_id is None:
+            return None
+
+        if token_type != "refresh":
+            return None
+
+        return user_id
+
+    except JWTError:
         return None
