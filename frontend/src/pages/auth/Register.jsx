@@ -1,24 +1,35 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/authApi";
 
 function Register() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setError("");
 
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            setError("Passwords do not match.");
             return;
         }
 
-        console.log({
-            username,
-            email,
-            password,
-        });
+        setLoading(true);
+
+        try {
+            await registerUser({ username, email, password });
+            navigate("/login");
+        } catch (requestError) {
+            setError(requestError.message || "Unable to create account.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -27,6 +38,8 @@ function Register() {
 
                 <h1>Create Account</h1>
                 <p>Create your CodeSphere account</p>
+
+                {error && <p className="auth-error">{error}</p>}
 
                 <form onSubmit={handleSubmit}>
 
@@ -84,8 +97,8 @@ function Register() {
                         />
                     </div>
 
-                    <button type="submit">
-                        Create Account
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Creating account..." : "Create Account"}
                     </button>
 
                 </form>

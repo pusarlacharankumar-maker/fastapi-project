@@ -1,17 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { loginUser } from "../../services/authApi";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [selectedRole, setSelectedRole] = useState("user");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setError("");
+        setLoading(true);
 
-        console.log({
-            email,
-            password,
-        });
+        try {
+            const tokens = await loginUser({ email, password });
+            const finalRole =
+                tokens.role ||
+                (tokens.is_admin ? "admin" : selectedRole || "user");
+
+            localStorage.setItem("access_token", tokens.access_token);
+            localStorage.setItem("refresh_token", tokens.refresh_token);
+            localStorage.setItem("role", finalRole);
+            localStorage.setItem("selected_role", selectedRole);
+            localStorage.setItem(
+                "is_admin",
+                String(Boolean(tokens.is_admin || finalRole === "admin"))
+            );
+            window.dispatchEvent(new Event("auth-change"));
+            navigate("/dashboard");
+        } catch (requestError) {
+            setError(requestError.message || "Unable to login.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -20,6 +44,8 @@ function Login() {
 
                 <h1>Welcome Back</h1>
                 <p>Login to your CodeSphere account</p>
+
+                {error && <p className="auth-error">{error}</p>}
 
                 <form onSubmit={handleSubmit}>
 
@@ -47,8 +73,20 @@ function Login() {
                         />
                     </div>
 
-                    <button type="submit">
-                        Login
+                    <div className="form-group">
+                        <label>Select Role</label>
+                        <select
+                            value={selectedRole}
+                            onChange={(event) => setSelectedRole(event.target.value)}
+                            className="role-select"
+                        >
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Logging in..." : "Login"}
                     </button>
 
                 </form>

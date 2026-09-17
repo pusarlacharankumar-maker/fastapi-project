@@ -52,6 +52,38 @@ a {
   text-decoration: underline;
 }
 
+.logout-btn {
+  border: none;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+.user-role {
+  background: #e0f2fe;
+  color: #075985;
+  border: 1px solid #bae6fd;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
 /* Authentication */
 
 .auth-page {
@@ -90,12 +122,17 @@ a {
   font-weight: 600;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 11px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 15px;
+}
+
+.role-select {
+  background: #ffffff;
 }
 
 .auth-card button {

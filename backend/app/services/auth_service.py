@@ -117,10 +117,14 @@ def login_user(
 
     db.commit()
 
+    role = "admin" if existing_user.is_admin else "user"
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "is_admin": existing_user.is_admin,
+        "role": role
     }
 
 
