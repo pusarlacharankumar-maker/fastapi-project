@@ -7,6 +7,8 @@ import Home from "./pages/Landingpage/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/dashboard/Dashboard";
+import AdminPanel from "./pages/admin/AdminPanel";
+import AdminLearning from "./pages/admin/AdminLearning";
 
 import Courses from "./pages/learning/Courses";
 import CourseDetails from "./pages/learning/CourseDetails";
@@ -73,7 +75,22 @@ function App() {
         <Route path="/interview" element={<h1>Interview Preparation</h1>} />
         <Route path="/resume" element={<h1>Resume</h1>} />
         <Route path="/placements" element={<h1>Placements</h1>} />
-        <Route path="/admin" element={<h1>Admin</h1>} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/learning"
+          element={
+            <ProtectedRoute>
+              <AdminLearning />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

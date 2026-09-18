@@ -72,6 +72,26 @@ export async function getCourse(courseId) {
     return apiRequest(`/learning/courses/${courseId}`);
 }
 
+export async function createCourse(course) {
+    return apiRequest("/learning/courses", {
+        method: "POST",
+        body: JSON.stringify(course),
+    });
+}
+
+export async function updateCourse(courseId, course) {
+    return apiRequest(`/learning/courses/${courseId}`, {
+        method: "PUT",
+        body: JSON.stringify(course),
+    });
+}
+
+export async function deleteCourse(courseId) {
+    return apiRequest(`/learning/courses/${courseId}`, {
+        method: "DELETE",
+    });
+}
+
 
 // ======================================================
 // LESSONS
@@ -88,6 +108,26 @@ export async function getLesson(lessonId) {
     return apiRequest(
         `/learning/lessons/${lessonId}`
     );
+}
+
+export async function createLesson(lesson) {
+    return apiRequest("/learning/lessons", {
+        method: "POST",
+        body: JSON.stringify(lesson),
+    });
+}
+
+export async function updateLesson(lessonId, lesson) {
+    return apiRequest(`/learning/lessons/${lessonId}`, {
+        method: "PUT",
+        body: JSON.stringify(lesson),
+    });
+}
+
+export async function deleteLesson(lessonId) {
+    return apiRequest(`/learning/lessons/${lessonId}`, {
+        method: "DELETE",
+    });
 }
 
 
@@ -195,8 +235,14 @@ export function getCompletedLessonCount(
 export default {
     getCourses,
     getCourse,
+    createCourse,
+    updateCourse,
+    deleteCourse,
     getCourseLessons,
     getLesson,
+    createLesson,
+    updateLesson,
+    deleteLesson,
     getAllProgress,
     getLessonProgress,
     updateLessonProgress,

@@ -52,5 +52,6 @@ def remove_user(
 ):
     return delete_user(
         user_id,
-        db
+        db,
+        current_user_id=current_admin.id
     )

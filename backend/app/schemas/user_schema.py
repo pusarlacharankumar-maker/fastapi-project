@@ -18,6 +18,7 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=72)
+    role: str | None = Field(default=None, min_length=1, max_length=20)
 
 
 # =========================

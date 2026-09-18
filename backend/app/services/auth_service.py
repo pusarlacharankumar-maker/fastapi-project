@@ -102,6 +102,26 @@ def login_user(
             detail="Invalid email or password"
         )
 
+    requested_role = (user.role or "").strip().lower()
+
+    if requested_role and requested_role not in {"user", "admin"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid role selected"
+        )
+
+    if requested_role == "admin" and not existing_user.is_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="This account is not allowed to login as admin"
+        )
+
+    if requested_role == "user" and existing_user.is_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="This account is authorized as admin and cannot log in as user"
+        )
+
     # Create access token
     access_token = create_access_token(
         existing_user.id

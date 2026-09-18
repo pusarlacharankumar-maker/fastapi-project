@@ -16,7 +16,11 @@ function Login() {
         setLoading(true);
 
         try {
-            const tokens = await loginUser({ email, password });
+            const tokens = await loginUser({
+                email,
+                password,
+                role: selectedRole,
+            });
             const finalRole =
                 tokens.role ||
                 (tokens.is_admin ? "admin" : selectedRole || "user");
@@ -30,6 +34,12 @@ function Login() {
                 String(Boolean(tokens.is_admin || finalRole === "admin"))
             );
             window.dispatchEvent(new Event("auth-change"));
+
+            if (finalRole === "admin" || tokens.is_admin) {
+                navigate("/admin");
+                return;
+            }
+
             navigate("/dashboard");
         } catch (requestError) {
             setError(requestError.message || "Unable to login.");
